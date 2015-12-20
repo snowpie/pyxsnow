@@ -6,7 +6,7 @@ import gobject
 import pango
 import math
 import argparse
-from random import randint
+from random import randint,seed
 #import sys
 #	if sys.argv:
 
@@ -31,6 +31,7 @@ class MainWindow(gtk.Window):
         parser.add_argument('--flakes',  metavar='N', type=int, default=150,help='Number of flakes to show.')
 
         parser.add_argument('--santa', help='Show Santa', action='store_true')
+        parser.add_argument('--gusty', help='Random Gusts', action='store_true')
         parser.add_argument('--tinsel', help='Show Tinsel', action='store_true')
 #        parser.add_argument('--things', metavar='FILEROOT', action='append', help='Root file name for other stuff. These must be .png files, named pixmaps/FILEROOTnn.png . May be specified multiple times.')
 #        parser.add_argument('--numthings',  metavar='N', action='append', type=int, help='Number of things to show, matched positionally wiith the --things argument.')
@@ -40,6 +41,7 @@ class MainWindow(gtk.Window):
         self.flakecount=args.flakes
         self.showsanta=args.santa
         self.showtinsel=args.tinsel
+        self.gusty=args.gusty
 
         gtk.Window.set_keep_above(self,True)
 
@@ -97,6 +99,7 @@ class MainWindow(gtk.Window):
         self.santay=20
         self.init_snow()
         self.init_stuff()
+	self.gust=0;
 
         self.set_app_paintable(True)
         # no window border
@@ -134,15 +137,25 @@ class MainWindow(gtk.Window):
             self.stuff.append([f,x,y])
 
     def calculate_flakes(self):
+        if (self.gusty):
+            r=randint(0,10000)
+            if (r <50 or self.gust <0):
+                self.gust=-25
+            elif ( r>9950 or self.gust >0):
+                self.gust=25
+            if ( r>4900 and r<5500):
+                self.gust=0;
+        else: self.gust=0;
         for i,member in enumerate(self.flakes):
+            g=i % 10
             x= self.flakes[i][1]
             if ( x > self.maxx or x < 0) :
                 x=randint(0,self.maxx)
             y= self.flakes[i][2]
             if ( y > self.maxy ) :
                 y=0
-            dx= self.flakes[i][3]
-            dy= self.flakes[i][4]
+            dx= self.flakes[i][3]+(g*self.gust)/10
+            dy= self.flakes[i][4]+(g*abs(self.gust))/20
             self.flakes[i][1]=x+dx
             self.flakes[i][2]=y+dy
 

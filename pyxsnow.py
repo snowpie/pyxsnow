@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+## by snowpie@github.com 2015
+## Inspired by the venerable xsnow from 2001 and earlier. Some images
+## may bare a striking resemblence to the original xsnow images.
 
 import gtk
 import cairo

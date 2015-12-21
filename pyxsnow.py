@@ -9,10 +9,11 @@ import gobject
 import pango
 import math
 import argparse
-from random import randint,seed
+from random import randint
 #import sys
 #	if sys.argv:
 
+DEBUG=1
 
 def progress_timeout(object):
     x, y, w, h = object.allocation
@@ -40,11 +41,12 @@ class MainWindow(gtk.Window):
 #        parser.add_argument('--numthings',  metavar='N', action='append', type=int, help='Number of things to show, matched positionally wiith the --things argument.')
 
         args = parser.parse_args()
-        print args
+        if (DEBUG): print args
         self.flakecount=args.flakes
         self.showsanta=args.santa
         self.showtinsel=args.tinsel
         self.gusty=args.gusty
+        self.dgust=0
 
         gtk.Window.set_keep_above(self,True)
 
@@ -94,10 +96,7 @@ class MainWindow(gtk.Window):
         self.flakes=[]
         self.stuff=[]
         self.santaindex=0
-        # self.flakecount=100
         self.santaframes=4
-        #self.maxx=1300
-        #self.maxy=700
         self.santax=150
         self.santay=20
         self.init_snow()
@@ -142,12 +141,16 @@ class MainWindow(gtk.Window):
     def calculate_flakes(self):
         if (self.gusty):
             r=randint(0,10000)
-            if (r <50 or self.gust <0):
+            if (r <50):
                 self.gust=-25
-            elif ( r>9950 or self.gust >0):
+                self.dgust=40;
+            elif ( r>9950):
+                self.dgust=40;
                 self.gust=25
-            if ( r>4900 and r<5500):
-                self.gust=0;
+
+            if (self.dgust>0):
+                self.dgust=self.dgust-1
+
         else: self.gust=0;
         for i,member in enumerate(self.flakes):
             g=i % 10
@@ -157,7 +160,7 @@ class MainWindow(gtk.Window):
             y= self.flakes[i][2]
             if ( y > self.maxy ) :
                 y=0
-            dx= self.flakes[i][3]+(g*self.gust)/10
+            dx= self.flakes[i][3]+(g*self.gust*self.dgust)/200
             dy= self.flakes[i][4]+(g*abs(self.gust))/20
             self.flakes[i][1]=x+dx
             self.flakes[i][2]=y+dy

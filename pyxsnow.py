@@ -17,7 +17,10 @@ DEBUG=1
 
 def progress_timeout(object):
     x, y, w, h = object.allocation
-    object.window.invalidate_rect((0,0,w,h),False)
+    try:
+        object.window.invalidate_rect((0,0,w,h),False)
+    except:
+        exit()
     return True
 
 
@@ -203,14 +206,14 @@ class MainWindow(gtk.Window):
         if (self.showtinsel):
             steps=self.maxx/self.tinselsize[0][0]
             tinselwidth,tinselheight=self.tinselsize[0][0],self.tinselsize[0][1]
-            for x in range(0,steps):
+            for x in range(0,steps+1):
                 ctx.set_source_surface(self.tinselimgs[0],x * tinselwidth,0)
                 ctx.paint()
                 ctx.set_source_surface(self.tinselimgs[0],x * tinselwidth,self.maxy-tinselheight)
                 ctx.paint()
             steps=self.maxx/self.tinselsize[1][0]
             tinselwidth,tinselheight=self.tinselsize[1][0],self.tinselsize[1][1]
-            for y in range(0,steps):
+            for y in range(0,steps+1):
                 ctx.set_source_surface(self.tinselimgs[1],0,y * tinselheight)
                 ctx.paint()
                 ctx.set_source_surface(self.tinselimgs[1],self.maxx-tinselwidth, y * tinselheight)
